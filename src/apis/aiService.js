@@ -50,7 +50,7 @@ export const sendMessage = async (messageData) => {
     user_id: messageData.userId || "anonymous",
     session_id: messageData.sessionId || "default",
     provider: messageData.provider || "Google",
-    ...(messageData.model && { model: messageData.model }),
+    model: messageData.model || "gemini-3-flash-preview",
     ...(messageData.imageUrl && { image_url: messageData.imageUrl }),
     react_mode: messageData.reactMode || false,
     max_steps: messageData.maxSteps || 5,
