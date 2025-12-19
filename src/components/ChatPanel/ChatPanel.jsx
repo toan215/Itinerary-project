@@ -269,8 +269,6 @@ const ChatPanel = ({
             message: messageText || "Tìm địa điểm tương tự ảnh này",
             userId,
             sessionId,
-            provider: "Google",
-            model: "gemini-3-flash-preview",
             reactMode: reactMode,
             imageUrl: uploadedImageUrl, // Use Supabase URL
           });
@@ -284,8 +282,6 @@ const ChatPanel = ({
           message: messageText,
           userId,
           sessionId,
-          provider: "Google",
-          model: "gemini-3-flash-preview",
           reactMode: reactMode,
         });
       }

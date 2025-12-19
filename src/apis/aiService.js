@@ -56,6 +56,7 @@ export const sendMessage = async (messageData) => {
     max_steps: messageData.maxSteps || 5,
   };
 
+  console.log("🚀 Sending to /chat:", payload);
   return await apiHelper.post(apiUrls.chat.send, payload);
 };
 
