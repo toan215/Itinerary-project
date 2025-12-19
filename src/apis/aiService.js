@@ -49,7 +49,7 @@ export const sendMessage = async (messageData) => {
     message: messageData.message,
     user_id: messageData.userId || "anonymous",
     session_id: messageData.sessionId || "default",
-    provider: messageData.provider || "MegaLLM",
+    provider: messageData.provider || "Google",
     ...(messageData.model && { model: messageData.model }),
     ...(messageData.imageUrl && { image_url: messageData.imageUrl }),
     react_mode: messageData.reactMode || false,
