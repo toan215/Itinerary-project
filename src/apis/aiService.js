@@ -30,8 +30,8 @@ export const uploadImage = async (imageFile, userId = "anonymous") => {
  * @param {string} messageData.message - User's message in natural language
  * @param {string} [messageData.userId="anonymous"] - User ID for session management
  * @param {string} [messageData.sessionId="default"] - Session ID for conversation history
- * @param {string} [messageData.provider="MegaLLM"] - LLM provider ("Google" or "MegaLLM")
- * @param {string} [messageData.model] - Model name (uses default if not specified)
+ * @param {string} [messageData.provider="Google"] - LLM provider ("Google" or "MegaLLM")
+ * @param {string} [messageData.model="gemini-3-flash-preview"] - Model name (uses default if not specified)
  * @param {string} [messageData.imageUrl] - Optional image URL for visual search
  * @param {boolean} [messageData.reactMode=false] - Enable ReAct multi-step reasoning
  * @param {number} [messageData.maxSteps=5] - Maximum reasoning steps (1-10)
