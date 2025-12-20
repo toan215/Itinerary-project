@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "../components/layout/AppLayout/AppLayout";
 import ItineraryList from "../components/Itinerary/ItineraryList";
 import ItineraryMap from "../components/Itinerary/ItineraryMap";
+import SmartPlanView from "../components/Itinerary/SmartPlanView";
 import ItinerarySkeleton from "../components/Itinerary/ItinerarySkeleton";
 import ContextualToolbar from "../components/ContextualToolbar/ContextualToolbar";
 import EditItineraryModal from "../components/Itinerary/EditItineraryModal";
@@ -29,6 +30,7 @@ import {
   Drawer,
   Skeleton,
 } from "@mantine/core";
+
 import { Splitter } from "antd";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import {
@@ -36,6 +38,7 @@ import {
   IconAdjustments,
   IconFileTypePdf,
   IconWand,
+  IconSparkles,
   IconMapPin,
   IconAlertCircle,
   IconTrash,
@@ -61,6 +64,10 @@ const AiItinerary = () => {
     setError,
     plan,
     optimizeRoute,
+    smartPlan,
+    isGeneratingPlan,
+    generateSmartPlan,
+    clearSmartPlan,
   } = useItineraryStore();
 
   // Fetch itinerary data on mount
@@ -91,9 +98,8 @@ const AiItinerary = () => {
                 firstItinerary.start_date,
                 firstItinerary.end_date
               ),
-              duration: `${firstItinerary.total_days} ${
-                firstItinerary.total_days === 1 ? "day" : "days"
-              }`,
+              duration: `${firstItinerary.total_days} ${firstItinerary.total_days === 1 ? "day" : "days"
+                }`,
             });
 
             // Set itinerary items (transformed days array)
@@ -142,9 +148,8 @@ const AiItinerary = () => {
       "Dec",
     ];
 
-    return `${months[start.getMonth()]} ${start.getDate()} - ${
-      months[end.getMonth()]
-    } ${end.getDate()}`;
+    return `${months[start.getMonth()]} ${start.getDate()} - ${months[end.getMonth()]
+      } ${end.getDate()}`;
   };
 
   /**
@@ -436,8 +441,22 @@ const AiItinerary = () => {
                       {plan.isOptimizing
                         ? "Optimizing..."
                         : plan.isOptimized
-                        ? "Route Optimized ✓"
-                        : "Optimize Route & Times"}
+                          ? "Route Optimized ✓"
+                          : "Optimize Route & Times"}
+                    </Button>
+                    <Button
+                      fullWidth
+                      mt="sm"
+                      size="md"
+                      radius="xl"
+                      variant="gradient"
+                      gradient={{ from: 'indigo', to: 'cyan' }}
+                      leftSection={<IconSparkles size={18} />}
+                      onClick={() => generateSmartPlan()}
+                      disabled={itineraryItems.length === 0}
+                      loading={isGeneratingPlan}
+                    >
+                      {isGeneratingPlan ? "Generating Plan..." : "Get AI Smart Plan"}
                     </Button>
                   </Box>
                 </Paper>
@@ -453,22 +472,6 @@ const AiItinerary = () => {
                     backgroundColor: "var(--mantine-color-gray-1)",
                   }}
                 >
-                  {/* ItineraryMap accepts optional props to customize:
-                      - center: [lat, lng] - Map center coordinates (default: Da Nang center)
-                      - zoom: number - Initial zoom level (default: 13)
-                      - routeColor: string - Route line color (default: "#3b82f6")
-                      - routeWeight: number - Route line thickness (default: 5)
-                      - routeOpacity: number - Route line opacity (default: 0.8)
-                      
-                      Example:
-                      <ItineraryMap 
-                        stops={currentItinerary.stops}
-                        center={[16.0544, 108.2022]}
-                        zoom={14}
-                        routeColor="#10b981"
-                        routeWeight={6}
-                      />
-                  */}
                   <ItineraryMap dayIndex={0} />
                 </Box>
               </Splitter.Panel>
@@ -519,6 +522,19 @@ const AiItinerary = () => {
                   >
                     Optimize
                   </Button>
+                  <Button
+                    fullWidth
+                    mt="xs"
+                    size="md"
+                    radius="xl"
+                    variant="gradient"
+                    gradient={{ from: 'indigo', to: 'cyan' }}
+                    leftSection={<IconSparkles size={18} />}
+                    onClick={() => generateSmartPlan()}
+                    loading={isGeneratingPlan}
+                  >
+                    Get AI Plan
+                  </Button>
                 </Box>
               </Flex>
             </Drawer>
@@ -546,6 +562,34 @@ const AiItinerary = () => {
             </Box>
           )}
         </Flex>
+
+        {/* Smart Plan Overlay/Modal */}
+        <Drawer
+          opened={!!smartPlan}
+          onClose={clearSmartPlan}
+          position="right"
+          size={isMobile ? "100%" : "450px"}
+          title={null}
+          withCloseButton={false}
+          styles={{
+            body: { padding: 0, height: "100%" }
+          }}
+        >
+          <Box h="100%" pos="relative">
+            <ActionIcon
+              pos="absolute"
+              top={15}
+              right={15}
+              style={{ zIndex: 100 }}
+              onClick={clearSmartPlan}
+              variant="subtle"
+              color="gray.0"
+            >
+              <IconAdjustments size={20} />
+            </ActionIcon>
+            <SmartPlanView plan={smartPlan} />
+          </Box>
+        </Drawer>
       </Flex>
 
       {/* Edit Itinerary Modal */}

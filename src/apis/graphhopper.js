@@ -140,8 +140,7 @@ export const optimizeRoute = async (locations, vehicle = "car") => {
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
-        `GraphHopper Optimization API error: ${
-          errorData.message || response.statusText
+        `GraphHopper Optimization API error: ${errorData.message || response.statusText
         }`
       );
     }

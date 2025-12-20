@@ -140,6 +140,25 @@ export const findNearbyPlaces = async (lat, lng, options = {}) => {
   return await apiHelper.post(apiUrls.nearby, payload);
 };
 
+/**
+ * Generate a smart itinerary plan using AI and social research
+ * @param {string} itineraryId - ID of the itinerary to plan
+ * @param {string} userId - ID of the user owning the itinerary
+ * @param {Object} [options] - Generation options
+ * @param {boolean} [options.includeSocialResearch=true] - Whether to include social media research
+ * @param {string} [options.freshness="pw"] - Data freshness ("pw"=past week, "pm"=past month)
+ * @returns {Promise<Object>} Generated smart plan
+ */
+export const getSmartPlan = async (itineraryId, userId, options = {}) => {
+  const payload = {
+    include_social_research: options.includeSocialResearch ?? true,
+    freshness: options.freshness || "pw",
+  };
+
+  const url = `${apiUrls.itinerary.getPlan(itineraryId)}?user_id=${userId}`;
+  return await apiHelper.post(url, payload);
+};
+
 export default {
   uploadImage,
   sendMessage,
@@ -147,4 +166,5 @@ export default {
   getChatHistory,
   searchByImage,
   findNearbyPlaces,
+  getSmartPlan,
 };

@@ -12,6 +12,7 @@ import {
   deleteStopAPI,
   fetchItineraryStopsAPI,
 } from "../apis/stopService";
+import useAuthStore from "./useAuthStore";
 
 /**
  * Zustand Store for Itinerary Management
@@ -39,6 +40,10 @@ const useItineraryStore = create(
         totalDistanceKm: 0,
         estimatedDurationMin: 0,
       },
+
+      // Smart Plan State (AI-generated optimized plan)
+      smartPlan: null,
+      isGeneratingPlan: false,
 
       // ========== Actions ==========
 
@@ -576,6 +581,52 @@ const useItineraryStore = create(
           },
         });
       },
+
+      /**
+       * Generate Smart Plan using AI and social research
+       * @param {Object} options - Generation options
+       */
+      generateSmartPlan: async (options = {}) => {
+        const { currentItinerary } = get();
+        if (!currentItinerary?.id) {
+          set({ error: "No itinerary selected" });
+          return;
+        }
+
+        set({ isGeneratingPlan: true, error: null });
+
+        try {
+          const userId = useAuthStore.getState().getUserId();
+          if (!userId) {
+            throw new Error("User not authenticated");
+          }
+
+          const { getSmartPlan } = await import("../apis/aiService");
+          const response = await getSmartPlan(currentItinerary.id, userId, options);
+
+          if (response?.plan) {
+            set({
+              smartPlan: response.plan,
+              isGeneratingPlan: false,
+            });
+            return response.plan;
+          } else {
+            throw new Error(response?.message || "Failed to generate smart plan");
+          }
+        } catch (err) {
+          console.error("Error generating smart plan:", err);
+          set({
+            error: err.message,
+            isGeneratingPlan: false,
+          });
+          throw err;
+        }
+      },
+
+      /**
+       * Clear current smart plan
+       */
+      clearSmartPlan: () => set({ smartPlan: null }),
 
       // ========== Backend API Integration ==========
 

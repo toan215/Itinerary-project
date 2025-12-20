@@ -62,6 +62,7 @@ export const apiUrls = {
     get: (id) => `${API_VERSION}/itineraries/${id}`,
     update: (id) => `${API_VERSION}/itineraries/${id}`,
     delete: (id) => `${API_VERSION}/itineraries/${id}`,
+    getPlan: (id) => `${API_VERSION}/itineraries/${id}/get-plan`,
     addStop: (id) => `${API_VERSION}/itineraries/${id}/stops`,
     updateStop: (id, stopId) =>
       `${API_VERSION}/itineraries/${id}/stops/${stopId}`,
